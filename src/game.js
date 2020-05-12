@@ -1,6 +1,9 @@
 import { Snake } from './snake.js';
 import { Stage } from './stage.js';
 
+/**
+ * Responsibility for managing the set up and control of the game.
+ */
 class Game {
     constructor() {
         this.segmentWidth = 20;
@@ -28,7 +31,10 @@ class Game {
 
         this.init();
     }
-
+    
+    /**
+     * Sets up the initial state of the game when starting new.
+     */
     init() {
         window.addEventListener("keydown", this.keydown.bind(this), false);
 
@@ -46,6 +52,9 @@ class Game {
         this.loop();
     }
 
+    /**
+     * Controls the movement of the snake.
+     */
     updateSnakePosition() {
         let passedMaxY = this.state.start.y > this.canvas.height + this.segmentWidth;
         let passedMinY = this.state.start.y < -this.segmentWidth;
@@ -78,6 +87,10 @@ class Game {
         this.snake.updatePosition(this.state.start.x, this.state.start.y);
     }
 
+    /**
+     * Checks for segment collisions and collisions with food, then updates the game state accordingly.
+     * @param {*} populatedPositions 
+     */
     checkCollision(populatedPositions) {
         let length = new Set(populatedPositions.map((p) => `${p.x}|${p.y}`)).size;
 
@@ -94,12 +107,32 @@ class Game {
             this.state.foodPos = this.generateRandomCoord();
             this.snake.push();
             this.state.score++;
-            this.score.innerHTML = "Score: " + this.state.score;
+            this.updateScore();
         }
     }
 
+    /**
+     * Updates the score on screen using the score stored in the state.
+     */
+    updateScore() {
+        this.score.innerHTML = "Score: " + this.state.score;
+    }
+
+    /**
+     * Resets the game, cleaning the state re-initialises.
+     */
     reset() {
-        this.state.score = 0;
+        this.state = {
+            direction: 'right',
+            paused: false,
+            isOver: false,
+            foodPos: undefined,
+            score: 0,
+            start: { x: 0, y: 0 },
+        }
+
+        this.updateScore();
+        this.init();
     }
 
     draw() {
@@ -128,17 +161,15 @@ class Game {
                     }, 1000 / this.fps);
                 }
             } else {
-                window.document.getElementById('game-over-screen').classList.add('show');
+                // window.document.getElementById('game-over-screen').classList.add('show');
                 this.reset();
             }
     }
 
     keydown(event) {
         var key = this.keyMap[event.keyCode]
-
-        if (key === 'space') {
-            this.snake.push();
-        } else if (key === 'p') {
+        
+        if (key === 'p') {
             this.state.paused = !this.state.paused;
         } else {
 
@@ -169,5 +200,3 @@ class Game {
 
 const game = new Game();
 game.init();
-
-
