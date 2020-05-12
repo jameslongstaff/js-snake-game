@@ -5,14 +5,18 @@
   "main": "snake.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
+  "homepage": "https://jameslongstaff.github.io/js-snake-game/",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
+    "gh-pages": "^2.2.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   }
