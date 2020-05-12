@@ -62,8 +62,9 @@ class Game {
 
         let passedMaxX = this.state.start.x > this.canvas.width + this.segmentWidth;
         let passedMinX = this.state.start.x < -this.segmentWidth;
+        let snakeOutOfBounds = passedMaxX || passedMinX || passedMinY || passedMaxY;
 
-        if (passedMaxX || passedMinX || passedMinY || passedMaxY) {
+        if (snakeOutOfBounds) {
             if (passedMaxX) this.state.start.x = 0;
             if (passedMinX) this.state.start.x = this.canvas.width;
             if (passedMinY) this.state.start.y = this.canvas.height - this.segmentWidth;
@@ -117,7 +118,7 @@ class Game {
      * Updates the score on screen using the score stored in the state.
      */
     updateScore() {
-        this.score.innerHTML = "Score: " + this.state.score;
+        this.score.innerHTML = `Score: ${this.state.score}`;
     }
 
     /**
