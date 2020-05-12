@@ -1,6 +1,14 @@
 import { Snake } from './snake.js';
 import { Stage } from './stage.js';
 
+const initialState = {
+    direction: 'right',
+    isOver: false,
+    foodPos: undefined,
+    score: 0,
+    start: { x: 0, y: 0 },
+}
+
 /**
  * Responsibility for managing the set up and control of the game.
  */
@@ -11,14 +19,7 @@ class Game {
         this.score = window.document.getElementById('score');
         this.fps = 7;
 
-        this.state = {
-            direction: 'right',
-            paused: false,
-            isOver: false,
-            foodPos: undefined,
-            score: 0,
-            start: { x: 0, y: 0 },
-        }
+        this.state = { ...initialState };
 
         this.keyMap = {
             32: 'space',
@@ -123,15 +124,7 @@ class Game {
      * Resets the game, cleaning the state re-initialises.
      */
     reset() {
-        this.state = {
-            direction: 'right',
-            paused: false,
-            isOver: false,
-            foodPos: undefined,
-            score: 0,
-            start: { x: 0, y: 0 },
-        }
-
+        this.state = { ...initialState };
         this.updateScore();
         this.init();
     }
@@ -150,12 +143,10 @@ class Game {
     loop() {
         if (!!this.state)
             if (!this.state.isOver) {
-                if (!this.state.paused) {
-                    setTimeout(() => {
-                        requestAnimationFrame(this.loop.bind(this));
-                        this.draw();
-                    }, 1000 / this.fps);
-                }
+                setTimeout(() => {
+                    requestAnimationFrame(this.loop.bind(this));
+                    this.draw();
+                }, 1000 / this.fps);
             } else {
                 // window.document.getElementById('game-over-screen').classList.add('show');
                 this.reset();
@@ -165,18 +156,13 @@ class Game {
     keydown(event) {
         var key = this.keyMap[event.keyCode]
         
-        if (key === 'p') {
-            this.state.paused = !this.state.paused;
-        } else {
-
-            if (
-                (key === 'left' && this.state.direction !== 'right') ||
-                (key === 'right' && this.state.direction !== 'left') ||
-                (key === 'up' && this.state.direction !== 'down') ||
-                (key === 'down' && this.state.direction !== 'up')
-            ) {
-                this.state.direction = key;
-            }
+        if (
+            (key === 'left' && this.state.direction !== 'right') ||
+            (key === 'right' && this.state.direction !== 'left') ||
+            (key === 'up' && this.state.direction !== 'down') ||
+            (key === 'down' && this.state.direction !== 'up')
+        ) {
+            this.state.direction = key;
         }
     }
 
