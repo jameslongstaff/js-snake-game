@@ -22,12 +22,10 @@ class Game {
         this.state = { ...initialState };
 
         this.keyMap = {
-            32: 'space',
             39: 'right',
             37: 'left',
             38: 'up',
             40: 'down',
-            80: 'p',
         };
 
         this.init();
@@ -64,11 +62,19 @@ class Game {
         let passedMinX = this.state.start.x < -this.segmentWidth;
         let snakeOutOfBounds = passedMaxX || passedMinX || passedMinY || passedMaxY;
 
+        // set the start x/y to opposite side if head moves outside of stage
         if (snakeOutOfBounds) {
-            if (passedMaxX) this.state.start.x = 0;
-            if (passedMinX) this.state.start.x = this.canvas.width;
-            if (passedMinY) this.state.start.y = this.canvas.height - this.segmentWidth;
-            if (passedMaxY) this.state.start.y = 0;
+
+            if (passedMaxX) { 
+                this.state.start.x = 0;
+            } else if (passedMinX) {
+                this.state.start.x = this.canvas.width;
+            } else if (passedMinY) {
+                this.state.start.y = this.canvas.height - this.segmentWidth;
+            } else if (passedMaxY) {
+                this.state.start.y = 0; 
+            }
+
         } else {
             switch (this.state.direction) {
                 case 'left':
@@ -101,11 +107,9 @@ class Game {
             this.state.isOver = true;
         }
 
-        let head = this.snake.head;
-
         if (
-            (head.position.x === this.state.foodPos.x) &&
-            (head.position.y === this.state.foodPos.y)
+            (this.snake.head.position.x === this.state.foodPos.x) &&
+            (this.snake.head.position.y === this.state.foodPos.y)
         ) {
             this.state.foodPos = this.getRandomPosition();
             this.snake.push();
@@ -153,10 +157,10 @@ class Game {
                 this.reset();
             }
     }
-
     keydown(event) {
         var key = this.keyMap[event.keyCode]
         
+        // prevent the user from changing to the opposite direction
         if (
             (key === 'left' && this.state.direction !== 'right') ||
             (key === 'right' && this.state.direction !== 'left') ||

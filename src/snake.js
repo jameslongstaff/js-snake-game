@@ -5,25 +5,21 @@ import { Segment } from './segment.js';
  * of all segments.
  */
 export class Snake {
-    constructor(stage) {
+    constructor() {
         this.head = null;
         this.tail = null;
         this.length = 0;
-        this.stage = stage;
     }
 
     /**
      * Append a segment to the snake.
      */
     push() {
-        let newSegment;
+        let newSegment = new Segment();;
 
         if (!this.head) {
-            newSegment = new Segment();
             this.head = newSegment;
         } else {
-            newSegment = new Segment();
-
             let oldTail = this.tail;
             oldTail.next = newSegment;
             newSegment.prev = oldTail;
@@ -74,7 +70,8 @@ export class Snake {
         let positions = [];
 
         while (current) {
-            positions.push({ x: current.position.x, y: current.position.y })
+            let { x, y } = current.position;
+            positions.push({ x, y });
             current = current.next;
         }
 

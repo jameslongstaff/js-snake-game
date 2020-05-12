@@ -1,5 +1,5 @@
 /**
- * 
+ * Inidividual node for snake.
  */
 export class Segment {
     constructor() {
