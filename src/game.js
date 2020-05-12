@@ -91,7 +91,8 @@ class Game {
      * Checks for segment collisions and collisions with food, then updates the game state accordingly.
      * @param {*} populatedPositions 
      */
-    checkCollision(populatedPositions) {
+    checkCollision() {
+        let populatedPositions = this.snake.getSegmentPositions();
         let length = new Set(populatedPositions.map((p) => `${p.x}|${p.y}`)).size;
 
         if (length !== populatedPositions.length) {
@@ -104,7 +105,7 @@ class Game {
             (head.position.x === this.state.foodPos.x) &&
             (head.position.y === this.state.foodPos.y)
         ) {
-            this.state.foodPos = this.generateRandomCoord();
+            this.state.foodPos = this.getRandomPosition();
             this.snake.push();
             this.state.score++;
             this.updateScore();
@@ -136,16 +137,11 @@ class Game {
     }
 
     draw() {
-        let populatedPositions = this.snake.getSegmentPositions();
-        let availablePositions = this.positions.filter((p) => !populatedPositions.includes(p));
-
-        let randomPosition = availablePositions[Math.floor(Math.random() * availablePositions.length)];
-
         if (this.state.foodPos === undefined) {
-            this.state.foodPos = randomPosition;
+            this.state.foodPos = this.getRandomPosition();
         }
 
-        this.checkCollision(populatedPositions);
+        this.checkCollision();
         this.updateSnakePosition();
 
         this.stage.render(this.snake, this.state);
@@ -184,18 +180,12 @@ class Game {
         }
     }
 
-    generateRandomCoord() {
-        let randomX = (this.getRandomInt(0, (this.canvas.width / 2 - this.segmentWidth) / 10) * this.segmentWidth);
-        let randomY = (this.getRandomInt(0, (this.canvas.height / 2 - this.segmentWidth) / 10) * this.segmentWidth);
+    getRandomPosition() {
+        let populatedPositions = this.snake.getSegmentPositions();
+        let availablePositions = this.positions.filter((p) => !populatedPositions.includes(p));
 
-        return { x: randomX, y: randomY };
+        return availablePositions[Math.floor(Math.random() * availablePositions.length)];
     }
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-
 }
 
 const game = new Game();
