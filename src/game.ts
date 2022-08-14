@@ -1,5 +1,6 @@
-import { Snake } from './snake.js';
-import { Stage } from './stage.js';
+import { Snake } from './snake';
+import { Stage } from './stage';
+import { keyMap } from './utils';
 
 const initialState = {
     direction: 'right',
@@ -13,6 +14,17 @@ const initialState = {
  * Responsibility for managing the set up and control of the game.
  */
 class Game {
+    private segmentWidth: number;
+    private fps: number;
+    private snake?: Snake;
+
+    private canvas: any;
+    private score: any;
+
+    private state: any;
+    private stage?: Stage;
+    private positions: any[] = [];
+
     constructor() {
         this.segmentWidth = 20;
         this.canvas = window.document.getElementById('canvas');
@@ -21,19 +33,9 @@ class Game {
 
         this.state = { ...initialState };
 
-        this.keyMap = {
-            39: 'right',
-            37: 'left',
-            38: 'up',
-            40: 'down',
-        };
-
         this.init();
     }
-    
-    /**
-     * Sets up the initial state of the game when starting new.
-     */
+
     init() {
         window.addEventListener("keydown", this.keydown.bind(this), false);
 
@@ -64,7 +66,6 @@ class Game {
 
         // set the start x/y to opposite side if head moves outside of stage
         if (snakeOutOfBounds) {
-
             if (passedMaxX) { 
                 this.state.start.x = 0;
             } else if (passedMinX) {
@@ -92,7 +93,7 @@ class Game {
             }
         }
 
-        this.snake.updatePosition(this.state.start.x, this.state.start.y);
+        this.snake!.updatePosition(this.state.start.x, this.state.start.y);
     }
 
     /**
@@ -100,19 +101,19 @@ class Game {
      * @param {*} populatedPositions 
      */
     checkCollision() {
-        let populatedPositions = this.snake.getSegmentPositions();
-        let length = new Set(populatedPositions.map((p) => `${p.x}|${p.y}`)).size;
+        let populatedPositions = this.snake!.getSegmentPositions();
+        let length = new Set(populatedPositions.map((p: {[coord: string]: number}) => `${p.x}|${p.y}`)).size;
 
         if (length !== populatedPositions.length) {
             this.state.isOver = true;
         }
 
         if (
-            (this.snake.head.position.x === this.state.foodPos.x) &&
-            (this.snake.head.position.y === this.state.foodPos.y)
+            (this.snake!.head.position.x === this.state.foodPos.x) &&
+            (this.snake!.head.position.y === this.state.foodPos.y)
         ) {
             this.state.foodPos = this.getRandomPosition();
-            this.snake.push();
+            this.snake!.push();
             this.state.score++;
             this.updateScore();
         }
@@ -142,7 +143,7 @@ class Game {
         this.checkCollision();
         this.updateSnakePosition();
 
-        this.stage.render(this.snake, this.state);
+        this.stage!.render(this.snake!, this.state);
     }
 
     loop() {
@@ -153,13 +154,13 @@ class Game {
                     this.draw();
                 }, 1000 / this.fps);
             } else {
-                // window.document.getElementById('game-over-screen').classList.add('show');
                 this.reset();
             }
     }
-    keydown(event) {
-        var key = this.keyMap[event.keyCode]
-        
+
+    keydown(event: KeyboardEvent) {
+        var key = keyMap[event.key]
+
         // prevent the user from changing to the opposite direction
         if (
             (key === 'left' && this.state.direction !== 'right') ||
@@ -172,7 +173,7 @@ class Game {
     }
 
     getRandomPosition() {
-        let populatedPositions = this.snake.getSegmentPositions();
+        let populatedPositions = this.snake!.getSegmentPositions();
         let availablePositions = this.positions.filter((p) => !populatedPositions.includes(p));
 
         return availablePositions[Math.floor(Math.random() * availablePositions.length)];

@@ -1,7 +1,14 @@
-export class Stage {
+import { Snake } from "./snake";
 
-    constructor(canvas) {
+export class Stage {
+    private segmentWidth?: number;
+    private canvas: any;
+    private ctx: any;
+    private start: {[coord: string]: number}
+
+    constructor(canvas: any) {
         this.canvas = canvas;
+
         this.ctx = canvas.getContext('2d');
 
         this.segmentWidth = 20;
@@ -11,13 +18,13 @@ export class Stage {
         this.start = { x: 0, y: 0 };
     }
 
-    render(snake, state) {
-        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    render(snake: Snake, state: any) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.renderSnake(snake);
         this.renderFood(state.foodPos);
     }
 
-    renderSnake(snake) {
+    renderSnake(snake: Snake) {
         let current = snake.head;
 
         while (current) {
@@ -28,7 +35,7 @@ export class Stage {
         }
     }
 
-    renderFood(foodPos) {
+    renderFood(foodPos: {[coord: string]: number}) {
         this.ctx.fillStyle = "#FF0000";
         this.ctx.fillRect(foodPos.x, foodPos.y, this.segmentWidth, this.segmentWidth);
         this.ctx.stroke();
