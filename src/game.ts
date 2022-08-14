@@ -1,8 +1,9 @@
-import { Snake } from './snake';
-import { Stage } from './stage';
+import Snake from './snake';
+import Stage from './stage';
+import { CoordinateType, GameStateType } from './types';
 import { keyMap } from './utils';
 
-const initialState = {
+const initialState: GameStateType = {
     direction: 'right',
     isOver: false,
     foodPos: undefined,
@@ -18,17 +19,17 @@ class Game {
     private fps: number;
     private snake?: Snake;
 
-    private canvas: any;
-    private score: any;
+    private canvas: HTMLCanvasElement;
+    private score: HTMLDivElement;
 
-    private state: any;
+    private state: GameStateType;
     private stage?: Stage;
-    private positions: any[] = [];
+    private positions: CoordinateType[] = [];
 
     constructor() {
         this.segmentWidth = 20;
-        this.canvas = window.document.getElementById('canvas');
-        this.score = window.document.getElementById('score');
+        this.canvas = window.document.getElementById('canvas') as HTMLCanvasElement;
+        this.score = window.document.getElementById('score') as HTMLDivElement;
         this.fps = 7;
 
         this.state = { ...initialState };
@@ -37,7 +38,7 @@ class Game {
     }
 
     init() {
-        window.addEventListener("keydown", this.keydown.bind(this), false);
+        window.addEventListener("keydown", () => this.keydown.bind(this), false);
 
         this.stage = new Stage(this.canvas);
         this.snake = new Snake();
@@ -102,15 +103,15 @@ class Game {
      */
     checkCollision() {
         let populatedPositions = this.snake!.getSegmentPositions();
-        let length = new Set(populatedPositions.map((p: {[coord: string]: number}) => `${p.x}|${p.y}`)).size;
+        let length = new Set(populatedPositions.map((p: CoordinateType) => `${p.x}|${p.y}`)).size;
 
         if (length !== populatedPositions.length) {
             this.state.isOver = true;
         }
 
         if (
-            (this.snake!.head.position.x === this.state.foodPos.x) &&
-            (this.snake!.head.position.y === this.state.foodPos.y)
+            (this.snake!.head!.position.x === this.state.foodPos!.x) &&
+            (this.snake!.head!.position.y === this.state.foodPos!.y)
         ) {
             this.state.foodPos = this.getRandomPosition();
             this.snake!.push();
@@ -147,7 +148,7 @@ class Game {
     }
 
     loop() {
-        if (!!this.state)
+        if (this.state)
             if (!this.state.isOver) {
                 setTimeout(() => {
                     requestAnimationFrame(this.loop.bind(this));
@@ -161,7 +162,6 @@ class Game {
     keydown(event: KeyboardEvent) {
         var key = keyMap[event.key]
 
-        // prevent the user from changing to the opposite direction
         if (
             (key === 'left' && this.state.direction !== 'right') ||
             (key === 'right' && this.state.direction !== 'left') ||
@@ -180,5 +180,4 @@ class Game {
     }
 }
 
-const game = new Game();
-game.init();
+export default Game;

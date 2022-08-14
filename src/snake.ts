@@ -1,18 +1,16 @@
-import { Segment } from './segment';
+import Segment from './segment';
 
 /**
  * The snake class controls the creation of the snake object, adding new segments and updating the positions
  * of all segments.
  */
-export class Snake {
-    public head: any;
-    public tail: any;
-    private length: number;
+class Snake {
+    public head: Segment | null;
+    public tail: Segment | null;
 
     constructor() {
         this.head = null;
         this.tail = null;
-        this.length = 0;
     }
 
     /**
@@ -24,13 +22,12 @@ export class Snake {
         if (!this.head) {
             this.head = newSegment;
         } else {
-            let oldTail = this.tail;
+            let oldTail = this.tail!;
             oldTail.next = newSegment;
             newSegment.prev = oldTail;
         }
 
         this.tail = newSegment;
-        this.length++;
 
         return this;
     }
@@ -38,12 +35,10 @@ export class Snake {
     /**
      * Traverse through the segments of the snake updating each segment position using the position 
      * of the previous segment.
-     * @param {*} x 
-     * @param {*} y 
      */
     updatePosition(x: number, y: number) {
-        let tempX = this.head.position.x;
-        let tempY = this.head.position.y;
+        let tempX = this.head!.position.x;
+        let tempY = this.head!.position.y;
 
         let current = this.head;
 
@@ -82,3 +77,5 @@ export class Snake {
         return positions;
     }
 }
+
+export default Snake;
